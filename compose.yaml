@@ -1,0 +1,40 @@
+version: "3.8"
+
+services:
+  # --- The Bodyguard (Tailscale) ---
+  tailscale:
+    image: tailscale/tailscale:latest
+    container_name: n8n-tailscale
+    hostname: n8n-server
+    environment:
+      - TS_AUTHKEY=${TAILSCALE_AUTH_KEY}
+      - TS_STATE_DIR=/var/lib/tailscale
+      - TS_SERVE_CONFIG=/config/ts-serve.json
+    volumes:
+      - tailscale_data:/var/lib/tailscale
+      - ./ts-serve.json:/config/ts-serve.json:ro
+    cap_add:
+      - net_admin
+      - net_raw
+    restart: unless-stopped
+
+  # --- The Application (n8n) ---
+  n8n:
+    image: docker.n8n.io/n8nio/n8n
+    container_name: n8n
+    restart: unless-stopped
+    network_mode: service:tailscale
+    environment:
+      - WEBHOOK_URL=${N8N_WEBHOOK_URL}
+      - GENERIC_TIMEZONE=America/New_York
+    volumes:
+      # This links the container to your existing volume
+      - n8n_data:/home/node/.n8n
+    depends_on:
+      - tailscale
+
+# --- Volume Declarations ---
+volumes:
+  tailscale_data:
+  n8n_data:
+    external: true
