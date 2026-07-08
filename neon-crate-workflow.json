@@ -1,0 +1,865 @@
+{
+  "id": "uQeZYIaWA5A1ingx",
+  "name": "Neon Crate",
+  "active": true,
+  "nodes": [
+    {
+      "parameters": {},
+      "type": "n8n-nodes-base.manualTrigger",
+      "typeVersion": 1,
+      "position": [
+        -1072,
+        -480
+      ],
+      "id": "a5cfac1a-2753-4f88-891c-99642c8f27b2",
+      "name": "When clicking \u2018Execute workflow\u2019"
+    },
+    {
+      "parameters": {
+        "rule": {
+          "interval": [
+            {
+              "daysInterval": 7
+            }
+          ]
+        }
+      },
+      "type": "n8n-nodes-base.scheduleTrigger",
+      "typeVersion": 1.3,
+      "position": [
+        -1072,
+        -656
+      ],
+      "id": "7bb535df-ee95-48f2-a6e6-b6f64880246d",
+      "name": "Schedule Trigger"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "=You are a personalized music discovery and recommendation engine.\n\n# CONTEXT\n\nYou will be provided with:\n\n1. A weighted genre taxonomy representing the user's music tastes.\n2. A summary of the user's known artist preferences.\n3. A collection of music-related source material, which may include:\n\n   * RSS feed entries\n   * Music reviews\n   * Blog posts\n   * Album reviews\n   * Artist interviews\n   * News articles\n   * Database records\n   * Release announcements\n   * Playlist descriptions\n   * Full article text\n\nYour task is to analyze the source material and identify music that the user is likely to enjoy.\n\n# PRIMARY OBJECTIVE\n\nRecommend specific music entities only:\n\n* Tracks - if you can't find a track name, recommend something else\n\nDo NOT recommend:\n\n* Articles\n* News stories\n* Reviews\n* Publications\n* Events\n* Festivals\n* Playlists\n* Albums\n* Artists\n\nThe final recommendations should be music, not content.\n\n# USER MUSIC PREFERENCE SUMMARY\n\nThe user prefers music that is primarily:\n\n* Vibe-driven (atmosphere, mood, texture are more important than technical complexity or genre purity)\n* Melodic and emotionally expressive\n* Groove-oriented (strong rhythmic feel, basslines, and band cohesion)\n* Moderately experimental, but still accessible\n* High production quality\n* Strongly album-oriented\n\nStrong positive signals:\n\nROCK / INDIE:\n\n* Radiohead\n* Tame Impala\n* Fleet Foxes\n* The Smashing Pumpkins\n* Built to Spill\n* The Strokes\n* The Black Keys\n* Led Zeppelin\n\nSOUL / FUNK:\n\n* Black Pumas\n* Leon Bridges\n* St. Paul and The Broken Bones\n* Alabama Shakes\n* Vulfpeck\n* Jamiroquai\n* Khruangbin\n\nPOP:\n\n* Billie Eilish\n* Dua Lipa\n* CHVRCHES\n\nELECTRONIC:\n\n* Tycho\n* Thievery Corporation\n\nHIP HOP:\n\n* A Tribe Called Quest\n* MF DOOM\n* Nujabes\n* Nas\n* The Notorious B.I.G.\n* Common\n* Mos Def\n* J Dilla\n\nJAZZ:\n\n* John Coltrane\n\nLower-fit signals:\n\n* Hardcore\n* Punk-oriented scenes\n* Death metal\n* Extreme metal\n* Aggressive EDM\n* Dark, abrasive trip hop\n* Hyperpop\n\n# GENRE TAXONOMY\n\n{\n\"Rock\": {\n\"Indie Rock\": 25,\n\"Psychedelic Rock\": 25,\n\"Alternative Rock\": 20,\n\"Garage Rock Revival\": 15,\n\"Dream Pop\": 10,\n\"Shoegaze\": 5\n},\n\"Pop\": {\n\"Art Pop\": 30,\n\"Indie Pop\": 25,\n\"Dance Pop\": 20,\n\"Synthpop\": 15,\n\"Electropop\": 10\n},\n\"Soul\": {\n\"Contemporary Soul\": 30,\n\"Psychedelic Soul\": 25,\n\"Funk\": 20,\n\"Neo Soul\": 15,\n\"Southern Roots Soul\": 10\n},\n\"Electronic\": {\n\"Ambient Ambient Pop\": 25,\n\"Downtempo Chillout\": 20,\n\"Melodic House\": 15,\n\"IDM\": 15,\n\"Deep House\": 10,\n\"Nu Disco Disco House\": 10,\n\"Breaks Electronica\": 5\n},\n\"Hip Hop\": {\n\"Jazz Rap\": 30,\n\"Boom Bap Golden Era\": 25,\n\"Alternative Hip Hop\": 20,\n\"Conscious Hip Hop\": 15,\n\"Instrumental Hip Hop\": 10\n},\n\"Jazz\": {\n\"Spiritual Modal Jazz\": 30,\n\"Contemporary Jazz\": 20,\n\"Jazz Funk Groove Jazz\": 20,\n\"Nu Jazz\": 15,\n\"Jazz Fusion\": 10,\n\"Avant Garde Jazz\": 5\n}\n}\n\n# DISCOVERY RULES\n\n1. Extract all artists, albums, and tracks mentioned in the source material.\n\n2. Infer genre alignment from:\n\n   * descriptions\n   * reviews\n   * comparisons\n   * publication context\n   * artist associations\n\n3. Assign up to three best-fit genres from the taxonomy.\n\n4. Score recommendations using:\n\n   A. Genre Alignment (highest importance)\n   B. Recency\n   C. Strength of source coverage\n   D. Novelty\n   E. Diversity\n\n# RECENCY RULE\n\nTarget approximately:\n\n* 70% recent discoveries\n* 30% older catalog discoveries\n\nRecent means:\n\n* newly released music\n* recently announced releases\n* recently covered artists/albums\n\nOlder recommendations are allowed when they are exceptionally strong matches.\n\nDo not recommend only new music.\nDo not recommend only classic music.\n\nMaintain the approximate 70/30 balance.\n\n# DIVERSITY RULES\n\n* Do not recommend the same artist more than once.\n* Do not recommend duplicate albums or tracks.\n* Avoid producing a list dominated by a single genre.\n* The final list should contain recommendations from multiple areas of the taxonomy.\n\nNatural clustering is acceptable.\nMonoculture is not.\n\n# RECOMMENDATION QUALITY\n\nPrefer:\n\n* Strong critical reception\n* Multiple mentions across sources\n* Artists adjacent to known preferences\n* Albums over artists when enough information exists\n* Tracks when they are the strongest signal\n\nNever invent artists, albums, or tracks.\n\nOnly recommend music supported by the provided source material.\n\n# OUTPUT FORMAT\n\nReturn ONLY valid JSON.\n\n```json \n{\n  \"recommendations\": [\n    {\n      \"rank\": 1,\n      \"type\": \"artist|album|track\",\n      \"name\": \"\",\n      \"artist\": \"\",\n      \"album\": null,\n      \"genres\": [],\n      \"recency\": \"new|old\",\n      \"score\": 0,\n      \"reason\": \"\"\n    }\n  ]\n}\n``` \n# REASON FIELD\n\nThe reason field must be concise.\n\nOne or two sentences maximum.\n\nExplain:\n\n* why the recommendation matches the user's taste\n* what genre or artist connection was detected\n\nDo not mention internal scoring.\n\n# FINAL INSTRUCTION\n\nAct as an expert music curator and ranking engine.\n\nUse the user's genre taxonomy as the primary preference model.\n\nExtract candidates from the supplied source material, rank them, and return the 10\u201315 strongest recommendations in valid JSON only.\n\nNotes: \nMake sure that the reasoning around why you recommend a track references the news or post that you got it from and why you think id like it. \n\nAlso include the date\n\nInput:\n\n{{ $json.data.toJsonString() }}",
+        "hasOutputParser": true,
+        "batching": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.9,
+      "position": [
+        1680,
+        -352
+      ],
+      "id": "84c5996f-63a5-434d-8cdb-1cc4658ec48d",
+      "name": "Basic LLM Chain",
+      "alwaysOutputData": true,
+      "onError": "continueErrorOutput"
+    },
+    {
+      "parameters": {
+        "url": "https://pitchfork.com/feed/reviews/best/albums/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -1136
+      ],
+      "id": "4fdaa486-4ad6-4a84-a128-e889f927bc66",
+      "name": "RSS - Pitchfork",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.rollingstone.com/music/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -992
+      ],
+      "id": "55bcc7ef-4c3e-4829-9d2f-10edd983aa4b",
+      "name": "RSS - Rolling Stone",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "aggregate": "aggregateAllItemData",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1424,
+        -352
+      ],
+      "id": "63c411bd-ea04-4c48-8abe-97ffa73c711b",
+      "name": "Aggregate"
+    },
+    {
+      "parameters": {
+        "numberInputs": 10
+      },
+      "type": "n8n-nodes-base.merge",
+      "typeVersion": 3.2,
+      "position": [
+        704,
+        -416
+      ],
+      "id": "309bb44e-ed39-4331-9593-8abb59f43bb1",
+      "name": "Merge"
+    },
+    {
+      "parameters": {
+        "amount": 1
+      },
+      "type": "n8n-nodes-base.wait",
+      "typeVersion": 1.1,
+      "position": [
+        -768,
+        -544
+      ],
+      "id": "247aef7e-489f-4e50-9e09-9a331de1da53",
+      "name": "Wait",
+      "webhookId": "7c88bd88-9ec4-4e2d-836a-db6f91b1bbad"
+    },
+    {
+      "parameters": {
+        "sendTo": "robcopeland@fastmail.com",
+        "subject": "=Neon Crate - {{ $today.toLocaleString() }}",
+        "message": "=<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f4f4f4\">\n  <tr>\n    <td align=\"center\" style=\"padding: 24px;\">\n\n```\n  <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" style=\"border-collapse: collapse;\">\n\n    <!-- Header -->\n    <tr>\n      <td style=\"padding: 32px 32px 16px 32px;\">\n        <h1 style=\"margin:0;font-family:Arial,sans-serif;font-size:28px;line-height:34px;color:#111111;\">\n          \ud83c\udfa7 Your Weekly Music Discoveries\n        </h1>\n        <p style=\"margin:8px 0 0 0;font-family:Arial,sans-serif;font-size:14px;color:#666666;\">\n          {{ $today.toLocaleString() }}\n        </p>\n      </td>\n    </tr>\n\n    <!-- Intro -->\n    <tr>\n      <td style=\"padding:0 32px 24px 32px;\">\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:0;\">\n          Hi Rob,\n        </p>\n\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:16px 0 0 0;\">\n          I analyzed this week's music news, reviews, and release coverage and found several discoveries that strongly match your taste profile.\n        </p>\n      </td>\n    </tr>\n\n<tr> <td bgcolor=\"#1DB954\" style=\"border-radius:4px;\"> <a href=\"{{ $('Create a playlist').item.json.external_urls.spotify }}\" target=\"_blank\" style=\" display:inline-block; padding:14px 24px; font-family:Arial,sans-serif; font-size:16px; font-weight:bold; color:#ffffff; text-decoration:none; \" > \u25b6 Open This Week's Playlist </a> </td> </tr>\n\n    {{ $('Basic LLM Chain').item.json.output.recommendations.map(item => `\n<tr>\n      <td style=\"padding:24px 32px;border-top:1px solid #eeeeee;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:12px;color:#777777;text-transform:uppercase;\">\n          Track\n        </p>\n\n        <h2 style=\"margin:8px 0 4px 0;font-family:Arial,sans-serif;font-size:22px;color:#111111;\">\n          ${item.name}\n        </h2>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:16px;color:#555555;\">\n          ${item.artist}\n        </p>\n\n        <p style=\"margin:16px 0 0 0;font-family:Arial,sans-serif;font-size:15px;line-height:22px;color:#333333;\">\n          ${item.createDate} - ${item.reason}\n        </p>\n      </td>\n    </tr>\n\n`) }}\n    \n    <!-- Summary -->\n    <tr>\n      <td style=\"padding:32px;border-top:1px solid #eeeeee;background-color:#fafafa;\">\n\n        <h3 style=\"margin:0 0 16px 0;font-family:Arial,sans-serif;font-size:18px;color:#111111;\">\n          Discovery Summary\n        </h3>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:15px;line-height:24px;color:#333333;\">\n          \u2022 70% new releases<br>\n          \u2022 30% catalog discoveries<br>\n          \u2022 Strongest themes: atmospheric indie, groove-oriented soul, jazz rap, and ambient electronic\n        </p>\n\n      </td>\n    </tr>\n\n    <!-- Footer -->\n    <tr>\n      <td style=\"padding:24px 32px;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:14px;color:#777777;\">\n          NeonCrate<br>\n          Your Personal Music Discovery Engine\n        </p>\n      </td>\n    </tr>\n\n  </table>\n\n</td>\n```\n\n  </tr>\n</table>\n",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        1872,
+        688
+      ],
+      "id": "97f840ba-aae0-4458-97a5-6a5a180212ef",
+      "name": "Send a message",
+      "webhookId": "5f5234cf-144d-4c01-9b91-0a7ef015d0ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "8QtpywaUtZt7ijrc",
+          "name": "Gmail account - neon_crate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "resource": "playlist",
+        "operation": "create",
+        "name": "=NeonCrate - {{ $today.toLocaleString() }}",
+        "additionalFields": {}
+      },
+      "type": "n8n-nodes-base.spotify",
+      "typeVersion": 1,
+      "position": [
+        1712,
+        496
+      ],
+      "id": "cdebefa3-7205-4f7b-91a9-f58a75985069",
+      "name": "Create a playlist",
+      "credentials": {
+        "spotifyOAuth2Api": {
+          "id": "BVk7VQUfCsdzNtac",
+          "name": "Spotify account - neon_crate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "jsonSchemaExample": "{\n  \"recommendations\": [\n    {\n      \"type\": \"track\",\n      \"name\": \"string\",\n      \"artist\": \"string\",\n      \"album\": \"string or null\",\n      \"genres\": [\"string\", \"string\"],\n      \"recency\": \"new | old\",\n      \"createDate\": \"string\",\n      \"postDate\": \"string\",\n      \"score\": \"number\",\n      \"reason\": \"1\u20132 sentence explanation of why this matches the user's taste taxonomy\"\n    }\n  ]\n}",
+        "autoFix": true
+      },
+      "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
+      "typeVersion": 1.3,
+      "position": [
+        1696,
+        -160
+      ],
+      "id": "00fb725a-dcdd-40c2-97fd-fed845cc3744",
+      "name": "Structured Output Parser"
+    },
+    {
+      "parameters": {
+        "fieldToSplitOut": "output.recommendations",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.splitOut",
+      "typeVersion": 1,
+      "position": [
+        976,
+        176
+      ],
+      "id": "49defe63-8ea4-4830-b0b6-9d6df60060c8",
+      "name": "Split Out"
+    },
+    {
+      "parameters": {
+        "model": "deepseek/deepseek-v4-flash",
+        "options": {}
+      },
+      "type": "@n8n/n8n-nodes-langchain.lmChatOpenRouter",
+      "typeVersion": 1,
+      "position": [
+        1600,
+        -32
+      ],
+      "id": "15856140-1440-4885-8729-adfef90422c7",
+      "name": "OpenRouter Chat Model",
+      "credentials": {
+        "openRouterApi": {
+          "id": "DSqDvqbNIPNYxAqu",
+          "name": "OpenRouter account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "b2ea93f9-9c2d-4f5d-a78b-ae8f614b7427",
+              "leftValue": "={{ $json.pubDate?.toDateTime() }}",
+              "rightValue": "={{ ($today - (7 * 24 * 60 * 60 * 1000))?.toDateTime() }}",
+              "operator": {
+                "type": "dateTime",
+                "operation": "after"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        880,
+        -352
+      ],
+      "id": "d68eef59-3278-451a-bad3-daa8feb95d27",
+      "name": "Filter"
+    },
+    {
+      "parameters": {
+        "maxItems": 150
+      },
+      "type": "n8n-nodes-base.limit",
+      "typeVersion": 1,
+      "position": [
+        1168,
+        -352
+      ],
+      "id": "b00d033e-5326-4167-ae37-2cd09cddd76e",
+      "name": "Limit"
+    },
+    {
+      "parameters": {
+        "method": "POST",
+        "url": "=https://api.spotify.com/v1/playlists/{{$('Create a playlist').first().json.id}}/items",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendBody": true,
+        "bodyParameters": {
+          "parameters": [
+            {
+              "name": "uris",
+              "value": "={{ $('Aggregate1').first().json.uri }}"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        1552,
+        688
+      ],
+      "id": "53e95b24-b268-4eac-a3fe-2f63e411d1f4",
+      "name": "Spotify - Add tracks to playlist",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BvZO6NcZwxCvvEvh",
+          "name": "Spotify - neon_create - manual oauth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://api.spotify.com/v1/search",
+        "authentication": "genericCredentialType",
+        "genericAuthType": "oAuth2Api",
+        "sendQuery": true,
+        "queryParameters": {
+          "parameters": [
+            {
+              "name": "q",
+              "value": "=track:{{$json.name}} artist:{{ $json.artist }}"
+            },
+            {
+              "name": "type",
+              "value": "track"
+            },
+            {
+              "name": "limit",
+              "value": "3"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.httpRequest",
+      "typeVersion": 4.4,
+      "position": [
+        992,
+        496
+      ],
+      "id": "3a22c68f-2bec-4e97-a5ad-06fb29a427a6",
+      "name": "Spotify - Search for Tracks",
+      "credentials": {
+        "oAuth2Api": {
+          "id": "BvZO6NcZwxCvvEvh",
+          "name": "Spotify - neon_create - manual oauth2"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "conditions": {
+          "options": {
+            "caseSensitive": true,
+            "leftValue": "",
+            "typeValidation": "strict",
+            "version": 3
+          },
+          "conditions": [
+            {
+              "id": "75dc96b6-0125-4198-977d-6061a0a1a117",
+              "leftValue": "={{ $json.tracks.items.length }}",
+              "rightValue": 0,
+              "operator": {
+                "type": "number",
+                "operation": "notEquals"
+              }
+            }
+          ],
+          "combinator": "and"
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.filter",
+      "typeVersion": 2.3,
+      "position": [
+        1200,
+        496
+      ],
+      "id": "6670c399-936e-40af-9e09-5069df7478c1",
+      "name": "Filter1"
+    },
+    {
+      "parameters": {
+        "aggregate": "=aggregateIndividualFields",
+        "fieldsToAggregate": {
+          "fieldToAggregate": [
+            {
+              "fieldToAggregate": "tracks.items[0].uri"
+            }
+          ]
+        },
+        "options": {}
+      },
+      "type": "n8n-nodes-base.aggregate",
+      "typeVersion": 1,
+      "position": [
+        1408,
+        496
+      ],
+      "id": "d73cbe79-da81-4bbc-affc-133999914315",
+      "name": "Aggregate1"
+    },
+    {
+      "parameters": {
+        "sendTo": "robcopeland@fastmail.com",
+        "subject": "=Unable to execute - Neon Crate",
+        "message": "=Error: {{ $('Basic LLM Chain').item.json.error }}",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.gmail",
+      "typeVersion": 2.2,
+      "position": [
+        2048,
+        -336
+      ],
+      "id": "c3b64f1b-cc03-4d06-90ba-f5a1dacb69cf",
+      "name": "Send an Error Email",
+      "webhookId": "5f5234cf-144d-4c01-9b91-0a7ef015d0ae",
+      "credentials": {
+        "gmailOAuth2": {
+          "id": "8QtpywaUtZt7ijrc",
+          "name": "Gmail account - neon_crate"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "url": "https://stereogum.com/rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -832
+      ],
+      "id": "a4dbb7e6-3dc0-419c-a5d7-ff7129364dbb",
+      "name": "RSS - Stereogum",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://consequence.net/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -672
+      ],
+      "id": "62232e62-9be9-4f2e-b26c-29e9a1d14443",
+      "name": "RSS - consequence",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.thefader.com/feed.rss",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -480
+      ],
+      "id": "b6dc18e2-00ad-4add-b312-a9f8248690d7",
+      "name": "RSS - Fader",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.gorillavsbear.net/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -336
+      ],
+      "id": "a779d811-e9ff-4199-9c20-e84f3d833c03",
+      "name": "RSS - Gorilla vs Bear",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://soulbounce.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -176
+      ],
+      "id": "077ec70f-c353-49b7-bd9a-7135d6f6b421",
+      "name": "RSS - Soul Bounce",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://www.stereofox.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        -16
+      ],
+      "id": "d16623d9-c4b8-4bf6-a7df-bd8a18e6cc49",
+      "name": "RSS - stereofox",
+      "retryOnFail": true
+    },
+    {
+      "parameters": {
+        "url": "https://aquariumdrunkard.com/feed/",
+        "options": {}
+      },
+      "type": "n8n-nodes-base.rssFeedRead",
+      "typeVersion": 1.2,
+      "position": [
+        0,
+        160
+      ],
+      "id": "1e275f14-8b69-41c7-af66-f159deca5900",
+      "name": "RSS - stereofox1",
+      "retryOnFail": true
+    }
+  ],
+  "connections": {
+    "When clicking \u2018Execute workflow\u2019": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Schedule Trigger": {
+      "main": [
+        [
+          {
+            "node": "Wait",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Pitchfork": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Rolling Stone": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 1
+          }
+        ]
+      ]
+    },
+    "Basic LLM Chain": {
+      "main": [
+        [
+          {
+            "node": "Split Out",
+            "type": "main",
+            "index": 0
+          }
+        ],
+        [
+          {
+            "node": "Send an Error Email",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate": {
+      "main": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Merge": {
+      "main": [
+        [
+          {
+            "node": "Filter",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Wait": {
+      "main": [
+        [
+          {
+            "node": "RSS - Pitchfork",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Rolling Stone",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Stereogum",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - consequence",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Fader",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Gorilla vs Bear",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - Soul Bounce",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - stereofox",
+            "type": "main",
+            "index": 0
+          },
+          {
+            "node": "RSS - stereofox1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Create a playlist": {
+      "main": [
+        [
+          {
+            "node": "Spotify - Add tracks to playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Structured Output Parser": {
+      "ai_outputParser": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_outputParser",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Split Out": {
+      "main": [
+        [
+          {
+            "node": "Spotify - Search for Tracks",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "OpenRouter Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Basic LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          },
+          {
+            "node": "Structured Output Parser",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter": {
+      "main": [
+        [
+          {
+            "node": "Limit",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Limit": {
+      "main": [
+        [
+          {
+            "node": "Aggregate",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spotify - Add tracks to playlist": {
+      "main": [
+        [
+          {
+            "node": "Send a message",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Spotify - Search for Tracks": {
+      "main": [
+        [
+          {
+            "node": "Filter1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Filter1": {
+      "main": [
+        [
+          {
+            "node": "Aggregate1",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Aggregate1": {
+      "main": [
+        [
+          {
+            "node": "Create a playlist",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "RSS - Stereogum": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 2
+          }
+        ]
+      ]
+    },
+    "RSS - consequence": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 3
+          }
+        ]
+      ]
+    },
+    "RSS - Fader": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 4
+          }
+        ]
+      ]
+    },
+    "RSS - Gorilla vs Bear": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 5
+          }
+        ]
+      ]
+    },
+    "RSS - Soul Bounce": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 6
+          }
+        ]
+      ]
+    },
+    "RSS - stereofox": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 7
+          }
+        ]
+      ]
+    },
+    "RSS - stereofox1": {
+      "main": [
+        [
+          {
+            "node": "Merge",
+            "type": "main",
+            "index": 8
+          }
+        ]
+      ]
+    }
+  },
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate"
+  },
+  "versionId": "cdfd7cb6-329d-4305-a790-88379b391220",
+  "createdAt": "2026-06-06 12:45:35.176",
+  "updatedAt": "2026-06-21 23:58:02.519",
+  "staticData": {
+    "node:Schedule Trigger": {
+      "recurrenceRules": [
+        178
+      ]
+    }
+  },
+  "pinData": {},
+  "meta": {
+    "templateCredsSetupCompleted": true
+  }
+}
