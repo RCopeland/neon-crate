@@ -12,7 +12,7 @@
         -480
       ],
       "id": "a5cfac1a-2753-4f88-891c-99642c8f27b2",
-      "name": "When clicking \u2018Execute workflow\u2019"
+      "name": "When clicking 'Execute workflow'"
     },
     {
       "parameters": {
@@ -36,7 +36,7 @@
     {
       "parameters": {
         "promptType": "define",
-        "text": "=You are a personalized music discovery and recommendation engine.\n\n# CONTEXT\n\nYou will be provided with:\n\n1. A weighted genre taxonomy representing the user's music tastes.\n2. A summary of the user's known artist preferences.\n3. A collection of music-related source material, which may include:\n\n   * RSS feed entries\n   * Music reviews\n   * Blog posts\n   * Album reviews\n   * Artist interviews\n   * News articles\n   * Database records\n   * Release announcements\n   * Playlist descriptions\n   * Full article text\n\nYour task is to analyze the source material and identify music that the user is likely to enjoy.\n\n# PRIMARY OBJECTIVE\n\nRecommend specific music entities only:\n\n* Tracks - if you can't find a track name, recommend something else\n\nDo NOT recommend:\n\n* Articles\n* News stories\n* Reviews\n* Publications\n* Events\n* Festivals\n* Playlists\n* Albums\n* Artists\n\nThe final recommendations should be music, not content.\n\n# USER MUSIC PREFERENCE SUMMARY\n\nThe user prefers music that is primarily:\n\n* Vibe-driven (atmosphere, mood, texture are more important than technical complexity or genre purity)\n* Melodic and emotionally expressive\n* Groove-oriented (strong rhythmic feel, basslines, and band cohesion)\n* Moderately experimental, but still accessible\n* High production quality\n* Strongly album-oriented\n\nStrong positive signals:\n\nROCK / INDIE:\n\n* Radiohead\n* Tame Impala\n* Fleet Foxes\n* The Smashing Pumpkins\n* Built to Spill\n* The Strokes\n* The Black Keys\n* Led Zeppelin\n\nSOUL / FUNK:\n\n* Black Pumas\n* Leon Bridges\n* St. Paul and The Broken Bones\n* Alabama Shakes\n* Vulfpeck\n* Jamiroquai\n* Khruangbin\n\nPOP:\n\n* Billie Eilish\n* Dua Lipa\n* CHVRCHES\n\nELECTRONIC:\n\n* Tycho\n* Thievery Corporation\n\nHIP HOP:\n\n* A Tribe Called Quest\n* MF DOOM\n* Nujabes\n* Nas\n* The Notorious B.I.G.\n* Common\n* Mos Def\n* J Dilla\n\nJAZZ:\n\n* John Coltrane\n\nLower-fit signals:\n\n* Hardcore\n* Punk-oriented scenes\n* Death metal\n* Extreme metal\n* Aggressive EDM\n* Dark, abrasive trip hop\n* Hyperpop\n\n# GENRE TAXONOMY\n\n{\n\"Rock\": {\n\"Indie Rock\": 25,\n\"Psychedelic Rock\": 25,\n\"Alternative Rock\": 20,\n\"Garage Rock Revival\": 15,\n\"Dream Pop\": 10,\n\"Shoegaze\": 5\n},\n\"Pop\": {\n\"Art Pop\": 30,\n\"Indie Pop\": 25,\n\"Dance Pop\": 20,\n\"Synthpop\": 15,\n\"Electropop\": 10\n},\n\"Soul\": {\n\"Contemporary Soul\": 30,\n\"Psychedelic Soul\": 25,\n\"Funk\": 20,\n\"Neo Soul\": 15,\n\"Southern Roots Soul\": 10\n},\n\"Electronic\": {\n\"Ambient Ambient Pop\": 25,\n\"Downtempo Chillout\": 20,\n\"Melodic House\": 15,\n\"IDM\": 15,\n\"Deep House\": 10,\n\"Nu Disco Disco House\": 10,\n\"Breaks Electronica\": 5\n},\n\"Hip Hop\": {\n\"Jazz Rap\": 30,\n\"Boom Bap Golden Era\": 25,\n\"Alternative Hip Hop\": 20,\n\"Conscious Hip Hop\": 15,\n\"Instrumental Hip Hop\": 10\n},\n\"Jazz\": {\n\"Spiritual Modal Jazz\": 30,\n\"Contemporary Jazz\": 20,\n\"Jazz Funk Groove Jazz\": 20,\n\"Nu Jazz\": 15,\n\"Jazz Fusion\": 10,\n\"Avant Garde Jazz\": 5\n}\n}\n\n# DISCOVERY RULES\n\n1. Extract all artists, albums, and tracks mentioned in the source material.\n\n2. Infer genre alignment from:\n\n   * descriptions\n   * reviews\n   * comparisons\n   * publication context\n   * artist associations\n\n3. Assign up to three best-fit genres from the taxonomy.\n\n4. Score recommendations using:\n\n   A. Genre Alignment (highest importance)\n   B. Recency\n   C. Strength of source coverage\n   D. Novelty\n   E. Diversity\n\n# RECENCY RULE\n\nTarget approximately:\n\n* 70% recent discoveries\n* 30% older catalog discoveries\n\nRecent means:\n\n* newly released music\n* recently announced releases\n* recently covered artists/albums\n\nOlder recommendations are allowed when they are exceptionally strong matches.\n\nDo not recommend only new music.\nDo not recommend only classic music.\n\nMaintain the approximate 70/30 balance.\n\n# DIVERSITY RULES\n\n* Do not recommend the same artist more than once.\n* Do not recommend duplicate albums or tracks.\n* Avoid producing a list dominated by a single genre.\n* The final list should contain recommendations from multiple areas of the taxonomy.\n\nNatural clustering is acceptable.\nMonoculture is not.\n\n# RECOMMENDATION QUALITY\n\nPrefer:\n\n* Strong critical reception\n* Multiple mentions across sources\n* Artists adjacent to known preferences\n* Albums over artists when enough information exists\n* Tracks when they are the strongest signal\n\nNever invent artists, albums, or tracks.\n\nOnly recommend music supported by the provided source material.\n\n# OUTPUT FORMAT\n\nReturn ONLY valid JSON.\n\n```json \n{\n  \"recommendations\": [\n    {\n      \"rank\": 1,\n      \"type\": \"artist|album|track\",\n      \"name\": \"\",\n      \"artist\": \"\",\n      \"album\": null,\n      \"genres\": [],\n      \"recency\": \"new|old\",\n      \"score\": 0,\n      \"reason\": \"\"\n    }\n  ]\n}\n``` \n# REASON FIELD\n\nThe reason field must be concise.\n\nOne or two sentences maximum.\n\nExplain:\n\n* why the recommendation matches the user's taste\n* what genre or artist connection was detected\n\nDo not mention internal scoring.\n\n# FINAL INSTRUCTION\n\nAct as an expert music curator and ranking engine.\n\nUse the user's genre taxonomy as the primary preference model.\n\nExtract candidates from the supplied source material, rank them, and return the 10\u201315 strongest recommendations in valid JSON only.\n\nNotes: \nMake sure that the reasoning around why you recommend a track references the news or post that you got it from and why you think id like it. \n\nAlso include the date\n\nInput:\n\n{{ $json.data.toJsonString() }}",
+        "text": "=You are a personalized music discovery and recommendation engine.\n\n# CONTEXT\n\nYou will be provided with:\n\n1. A weighted genre taxonomy representing the user's music tastes.\n2. A summary of the user's known artist preferences.\n3. A collection of music-related source material from RSS feeds, which may include:\n\n   - Album reviews\n   - Track reviews\n   - Artist interviews\n   - News articles\n   - Release announcements\n   - Blog posts\n   - Playlist descriptions\n   - Full article text\n\nYour task is to analyze the source material and identify **tracks** that the user is likely to enjoy.\n\n# PRIMARY OBJECTIVE\n\nRecommend **tracks only**.\n\nDo NOT recommend:\n- Artists\n- Albums\n- Articles\n- News stories\n- Reviews\n- Publications\n- Events\n- Festivals\n- Playlists\n\nThe final output must be music tracks, not content about music.\n\n# USER MUSIC PREFERENCE SUMMARY\n\nThe user prefers music that is primarily:\n\n- Vibe-driven (atmosphere, mood, texture are more important than technical complexity or genre purity)\n- Melodic and emotionally expressive\n- Groove-oriented (strong rhythmic feel, basslines, and band cohesion)\n- Moderately experimental, but still accessible\n- High production quality\n- Strongly album-oriented\n\nStrong positive signals:\n\nROCK / INDIE:\n- Radiohead\n- Tame Impala\n- Fleet Foxes\n- The Smashing Pumpkins\n- Built to Spill\n- The Strokes\n- The Black Keys\n- Led Zeppelin\n\nSOUL / FUNK:\n- Black Pumas\n- Leon Bridges\n- St. Paul and The Broken Bones\n- Alabama Shakes\n- Vulfpeck\n- Jamiroquai\n- Khruangbin\n\nPOP:\n- Billie Eilish\n- Dua Lipa\n- CHVRCHES\n\nELECTRONIC:\n- Tycho\n- Thievery Corporation\n\nHIP HOP:\n- A Tribe Called Quest\n- MF DOOM\n- Nujabes\n- Nas\n- The Notorious B.I.G.\n- Common\n- Mos Def\n- J Dilla\n\nJAZZ:\n- John Coltrane\n\nLower-fit signals (avoid):\n- Hardcore\n- Punk-oriented scenes\n- Death metal\n- Extreme metal\n- Aggressive EDM\n- Dark, abrasive trip hop\n- Hyperpop\n\n# GENRE TAXONOMY\n\n{\n  \"Rock\": {\n    \"Indie Rock\": 25,\n    \"Psychedelic Rock\": 25,\n    \"Alternative Rock\": 20,\n    \"Garage Rock Revival\": 15,\n    \"Dream Pop\": 10,\n    \"Shoegaze\": 5\n  },\n  \"Pop\": {\n    \"Art Pop\": 30,\n    \"Indie Pop\": 25,\n    \"Dance Pop\": 20,\n    \"Synthpop\": 15,\n    \"Electropop\": 10\n  },\n  \"Soul\": {\n    \"Contemporary Soul\": 30,\n    \"Psychedelic Soul\": 25,\n    \"Funk\": 20,\n    \"Neo Soul\": 15,\n    \"Southern Roots Soul\": 10\n  },\n  \"Electronic\": {\n    \"Ambient Pop\": 25,\n    \"Downtempo Chillout\": 20,\n    \"Melodic House\": 15,\n    \"IDM\": 15,\n    \"Deep House\": 10,\n    \"Nu Disco / Disco House\": 10,\n    \"Breaks Electronica\": 5\n  },\n  \"Hip Hop\": {\n    \"Jazz Rap\": 30,\n    \"Boom Bap Golden Era\": 25,\n    \"Alternative Hip Hop\": 20,\n    \"Conscious Hip Hop\": 15,\n    \"Instrumental Hip Hop\": 10\n  },\n  \"Jazz\": {\n    \"Spiritual Modal Jazz\": 30,\n    \"Contemporary Jazz\": 20,\n    \"Jazz Funk / Groove Jazz\": 20,\n    \"Nu Jazz\": 15,\n    \"Jazz Fusion\": 10,\n    \"Avant Garde Jazz\": 5\n  }\n}\n\n# DISCOVERY RULES\n\n1. Extract all artists, albums, and tracks mentioned in the source material.\n\n2. Infer genre alignment from:\n   - Descriptions\n   - Reviews\n   - Comparisons\n   - Publication context\n   - Artist associations\n\n3. Assign up to three best-fit genres from the taxonomy.\n\n4. Rank recommendations using these weighted criteria:\n   - Genre Alignment (40%): How well the track fits the user's taxonomy and known preferences\n   - Source Strength (30%): Multiple mentions across sources, strong critical reception, depth of coverage\n   - Recency (20%): Newer releases score higher\n   - Novelty (10%): Artists or sounds the user likely hasn't encountered\n\n# RECENCY GUIDELINE\n\nPrefer recently released music, but include older catalog discoveries when the match is exceptionally strong. Do not recommend only new music or only classic music. Natural balance is more important than hitting an exact ratio.\n\nRecent means:\n- Newly released music\n- Recently announced releases\n- Recently covered artists/albums\n\n# DIVERSITY RULES\n\n- Do not recommend the same artist more than once.\n- Do not recommend duplicate tracks.\n- Avoid a list dominated by a single genre.\n- The final list should span multiple areas of the taxonomy.\n- Natural clustering is acceptable. Monoculture is not.\n\n# RECOMMENDATION QUALITY\n\nPrefer:\n- Strong critical reception\n- Multiple mentions across sources\n- Artists adjacent to known preferences\n- Tracks when they are the strongest signal\n\nNever invent artists, albums, or tracks.\nOnly recommend music supported by the provided source material.\n\n# OUTPUT FORMAT\n\nReturn ONLY valid JSON.\n\n```json\n{\n  \"recommendations\": [\n    {\n      \"rank\": 1,\n      \"type\": \"track\",\n      \"name\": \"\",\n      \"artist\": \"\",\n      \"album\": \"\",\n      \"genres\": [],\n      \"recency\": \"new|old\",\n      \"createDate\": \"\",\n      \"postDate\": \"\",\n      \"score\": 0,\n      \"reason\": \"\"\n    }\n  ]\n}\n```\n\n# FIELD DEFINITIONS\n\n- `rank`: Position in the recommendation list (1 = strongest).\n- `type`: Always \"track\".\n- `name`: The track name.\n- `artist`: The artist or group name.\n- `album`: The album name, or null if unknown.\n- `genres`: 1–3 genre labels from the taxonomy above.\n- `recency`: \"new\" for recently released, \"old\" for catalog discoveries.\n- `createDate`: The track or album release date (YYYY-MM-DD format, or approximate like \"2025-03\"). Use null if unknown.\n- `postDate`: The date of the source article or review that mentioned this track (YYYY-MM-DD format).\n- `score`: Composite score from 1–10 based on the weighted criteria above.\n- `reason`: One or two sentences explaining why this track matches the user's taste, referencing the specific source article or review.\n\n# REASON FIELD\n\nThe reason field must:\n- Be concise (1–2 sentences max)\n- Reference the specific source (e.g., \"Pitchfork review\", \"Stereogum feature\")\n- Explain why the user would like it based on their taste profile\n- NOT mention internal scoring or ranking mechanics\n\n# FINAL INSTRUCTION\n\nAct as an expert music curator and ranking engine.\nUse the user's genre taxonomy as the primary preference model.\nExtract track candidates from the supplied source material, rank them, and return the 10–15 strongest recommendations in valid JSON only.\n\nInput:\n\n{{ $json.data.toJsonString() }}",
         "hasOutputParser": true,
         "batching": {}
       },
@@ -126,7 +126,7 @@
       "parameters": {
         "sendTo": "robcopeland@fastmail.com",
         "subject": "=Neon Crate - {{ $today.toLocaleString() }}",
-        "message": "=<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f4f4f4\">\n  <tr>\n    <td align=\"center\" style=\"padding: 24px;\">\n\n```\n  <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" style=\"border-collapse: collapse;\">\n\n    <!-- Header -->\n    <tr>\n      <td style=\"padding: 32px 32px 16px 32px;\">\n        <h1 style=\"margin:0;font-family:Arial,sans-serif;font-size:28px;line-height:34px;color:#111111;\">\n          \ud83c\udfa7 Your Weekly Music Discoveries\n        </h1>\n        <p style=\"margin:8px 0 0 0;font-family:Arial,sans-serif;font-size:14px;color:#666666;\">\n          {{ $today.toLocaleString() }}\n        </p>\n      </td>\n    </tr>\n\n    <!-- Intro -->\n    <tr>\n      <td style=\"padding:0 32px 24px 32px;\">\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:0;\">\n          Hi Rob,\n        </p>\n\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:16px 0 0 0;\">\n          I analyzed this week's music news, reviews, and release coverage and found several discoveries that strongly match your taste profile.\n        </p>\n      </td>\n    </tr>\n\n<tr> <td bgcolor=\"#1DB954\" style=\"border-radius:4px;\"> <a href=\"{{ $('Create a playlist').item.json.external_urls.spotify }}\" target=\"_blank\" style=\" display:inline-block; padding:14px 24px; font-family:Arial,sans-serif; font-size:16px; font-weight:bold; color:#ffffff; text-decoration:none; \" > \u25b6 Open This Week's Playlist </a> </td> </tr>\n\n    {{ $('Basic LLM Chain').item.json.output.recommendations.map(item => `\n<tr>\n      <td style=\"padding:24px 32px;border-top:1px solid #eeeeee;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:12px;color:#777777;text-transform:uppercase;\">\n          Track\n        </p>\n\n        <h2 style=\"margin:8px 0 4px 0;font-family:Arial,sans-serif;font-size:22px;color:#111111;\">\n          ${item.name}\n        </h2>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:16px;color:#555555;\">\n          ${item.artist}\n        </p>\n\n        <p style=\"margin:16px 0 0 0;font-family:Arial,sans-serif;font-size:15px;line-height:22px;color:#333333;\">\n          ${item.createDate} - ${item.reason}\n        </p>\n      </td>\n    </tr>\n\n`) }}\n    \n    <!-- Summary -->\n    <tr>\n      <td style=\"padding:32px;border-top:1px solid #eeeeee;background-color:#fafafa;\">\n\n        <h3 style=\"margin:0 0 16px 0;font-family:Arial,sans-serif;font-size:18px;color:#111111;\">\n          Discovery Summary\n        </h3>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:15px;line-height:24px;color:#333333;\">\n          \u2022 70% new releases<br>\n          \u2022 30% catalog discoveries<br>\n          \u2022 Strongest themes: atmospheric indie, groove-oriented soul, jazz rap, and ambient electronic\n        </p>\n\n      </td>\n    </tr>\n\n    <!-- Footer -->\n    <tr>\n      <td style=\"padding:24px 32px;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:14px;color:#777777;\">\n          NeonCrate<br>\n          Your Personal Music Discovery Engine\n        </p>\n      </td>\n    </tr>\n\n  </table>\n\n</td>\n```\n\n  </tr>\n</table>\n",
+        "message": "=<table role=\"presentation\" width=\"100%\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#f4f4f4\">\n  <tr>\n    <td align=\"center\" style=\"padding: 24px;\">\n\n```\n  <table role=\"presentation\" width=\"600\" cellpadding=\"0\" cellspacing=\"0\" border=\"0\" bgcolor=\"#ffffff\" style=\"border-collapse: collapse;\">\n\n    <!-- Header -->\n    <tr>\n      <td style=\"padding: 32px 32px 16px 32px;\">\n        <h1 style=\"margin:0;font-family:Arial,sans-serif;font-size:28px;line-height:34px;color:#111111;\">\n          \ud83c\udfa7 Your Weekly Music Discoveries\n        </h1>\n        <p style=\"margin:8px 0 0 0;font-family:Arial,sans-serif;font-size:14px;color:#666666;\">\n          {{ $today.toLocaleString() }}\n        </p>\n      </td>\n    </tr>\n\n    <!-- Intro -->\n    <tr>\n      <td style=\"padding:0 32px 24px 32px;\">\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:0;\">\n          Hi Rob,\n        </p>\n\n        <p style=\"font-family:Arial,sans-serif;font-size:16px;line-height:24px;color:#333333;margin:16px 0 0 0;\">\n          I analyzed this week's music news, reviews, and release coverage and found several discoveries that strongly match your taste profile.\n        </p>\n      </td>\n    </tr>\n\n<tr> <td bgcolor=\"#1DB954\" style=\"border-radius:4px;\"> <a href=\"{{ $('Create a playlist').item.json.external_urls.spotify }}\" target=\"_blank\" style=\" display:inline-block; padding:14px 24px; font-family:Arial,sans-serif; font-size:16px; font-weight:bold; color:#ffffff; text-decoration:none; \" > \u25b6 Open This Week's Playlist </a> </td> </tr>\n\n    {{ $('Basic LLM Chain').item.json.output.recommendations.map(item => `\n<tr>\n      <td style=\"padding:24px 32px;border-top:1px solid #eeeeee;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:12px;color:#777777;text-transform:uppercase;\">\n          Track\n        </p>\n\n        <h2 style=\"margin:8px 0 4px 0;font-family:Arial,sans-serif;font-size:22px;color:#111111;\">\n          ${item.name}\n        </h2>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:16px;color:#555555;\">\n          ${item.artist}\n        </p>\n\n        <p style=\"margin:16px 0 0 0;font-family:Arial,sans-serif;font-size:15px;line-height:22px;color:#333333;\">\n          ${item.postDate} — ${item.reason}\n        </p>\n      </td>\n    </tr>\n\n`) }}\n    \n    <!-- Summary -->\n    <tr>\n      <td style=\"padding:32px;border-top:1px solid #eeeeee;background-color:#fafafa;\">\n\n        <h3 style=\"margin:0 0 16px 0;font-family:Arial,sans-serif;font-size:18px;color:#111111;\">\n          Discovery Summary\n        </h3>\n\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:15px;line-height:24px;color:#333333;\">\n          \u2022 New releases and recent coverage<br>\n          \u2022 Catalog discoveries from your taste profile<br>\n          \u2022 Spanning: ${[...new Set($('Basic LLM Chain').item.json.output.recommendations.flatMap(r => r.genres))].join(', ')}\n        </p>\n\n      </td>\n    </tr>\n\n    <!-- Footer -->\n    <tr>\n      <td style=\"padding:24px 32px;\">\n        <p style=\"margin:0;font-family:Arial,sans-serif;font-size:14px;color:#777777;\">\n          NeonCrate<br>\n          Your Personal Music Discovery Engine\n        </p>\n      </td>\n    </tr>\n\n  </table>\n\n</td>\n```\n\n  </tr>\n</table>\n",
         "options": {}
       },
       "type": "n8n-nodes-base.gmail",
@@ -169,7 +169,7 @@
     },
     {
       "parameters": {
-        "jsonSchemaExample": "{\n  \"recommendations\": [\n    {\n      \"type\": \"track\",\n      \"name\": \"string\",\n      \"artist\": \"string\",\n      \"album\": \"string or null\",\n      \"genres\": [\"string\", \"string\"],\n      \"recency\": \"new | old\",\n      \"createDate\": \"string\",\n      \"postDate\": \"string\",\n      \"score\": \"number\",\n      \"reason\": \"1\u20132 sentence explanation of why this matches the user's taste taxonomy\"\n    }\n  ]\n}",
+        "jsonSchemaExample": "{\n  \"recommendations\": [\n    {\n      \"rank\": 1,\n      \"type\": \"track\",\n      \"name\": \"string\",\n      \"artist\": \"string\",\n      \"album\": \"string or null\",\n      \"genres\": [\"string\", \"string\"],\n      \"recency\": \"new | old\",\n      \"createDate\": \"YYYY-MM-DD or null\",\n      \"postDate\": \"YYYY-MM-DD\",\n      \"score\": 8,\n      \"reason\": \"1–2 sentence explanation referencing the source article and why this matches the user's taste\"\n    }\n  ]\n}",
         "autoFix": true
       },
       "type": "@n8n/n8n-nodes-langchain.outputParserStructured",
@@ -343,7 +343,7 @@
           },
           "conditions": [
             {
-              "id": "75dc96b6-0125-4198-977d-6061a0a1a117",
+              "id": "75dc96b9-0125-4198-977d-6061d0a1a117",
               "leftValue": "={{ $json.tracks.items.length }}",
               "rightValue": 0,
               "operator": {
@@ -480,7 +480,7 @@
         0,
         -176
       ],
-      "id": "077ec70f-c353-49b7-bd9a-7135d6f6b421",
+      "id": "077ec70f-c353-4b9b-bd9a-7135d6f6b421",
       "name": "RSS - Soul Bounce",
       "retryOnFail": true
     },
@@ -511,12 +511,12 @@
         160
       ],
       "id": "1e275f14-8b69-41c7-af66-f159deca5900",
-      "name": "RSS - stereofox1",
+      "name": "RSS - Aquarium Drunkard",
       "retryOnFail": true
     }
   ],
   "connections": {
-    "When clicking \u2018Execute workflow\u2019": {
+    "When clicking 'Execute workflow'": {
       "main": [
         [
           {
@@ -619,7 +619,7 @@
             "index": 0
           },
           {
-            "node": "RSS - consequence",
+            "node": "RSS - Consequence",
             "type": "main",
             "index": 0
           },
@@ -639,12 +639,12 @@
             "index": 0
           },
           {
-            "node": "RSS - stereofox",
+            "node": "RSS - Stereofox",
             "type": "main",
             "index": 0
           },
           {
-            "node": "RSS - stereofox1",
+            "node": "RSS - Aquarium Drunkard",
             "type": "main",
             "index": 0
           }
@@ -777,7 +777,7 @@
         ]
       ]
     },
-    "RSS - consequence": {
+    "RSS - Consequence": {
       "main": [
         [
           {
@@ -821,7 +821,7 @@
         ]
       ]
     },
-    "RSS - stereofox": {
+    "RSS - Stereofox": {
       "main": [
         [
           {
@@ -832,7 +832,7 @@
         ]
       ]
     },
-    "RSS - stereofox1": {
+    "RSS - Aquarium Drunkard": {
       "main": [
         [
           {
@@ -850,7 +850,7 @@
   },
   "versionId": "cdfd7cb6-329d-4305-a790-88379b391220",
   "createdAt": "2026-06-06 12:45:35.176",
-  "updatedAt": "2026-06-21 23:58:02.519",
+  "updatedAt": "2026-07-18 00:00:00.000",
   "staticData": {
     "node:Schedule Trigger": {
       "recurrenceRules": [
