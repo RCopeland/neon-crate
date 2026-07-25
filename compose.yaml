@@ -1,5 +1,3 @@
-version: "3.8"
-
 services:
   # --- The Bodyguard (Tailscale) ---
   tailscale:
@@ -37,4 +35,4 @@ services:
 volumes:
   tailscale_data:
   n8n_data:
-    external: true
+    name: n8n_data
